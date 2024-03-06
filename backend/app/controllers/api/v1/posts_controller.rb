@@ -1,9 +1,9 @@
+# app/controllers/api/v1/posts_controller.rb
+
 module Api
   module V1
     class PostsController < ApplicationController
       protect_from_forgery with: :null_session
-     
-      
 
       def index
         user = current_api_v1_user
@@ -20,13 +20,13 @@ module Api
         end
       end
 
-      private 
+  
 
-        def post_params
-          params.require(:post).permit(:title, :content).merge(user_id: current_api_v1_user.id)
-        end
+      private
 
-    
+      def post_params
+        params.require(:post).permit(:title, :content, :image).merge(user_id: current_api_v1_user.id)
+      end
     end
   end
 end

@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Modal, Button, Card } from 'react-bootstrap';
-
+import { Modal, Button, Card, Row, Col } from 'react-bootstrap';
 import fetchPosts from '../apis/blogsAPI.js';
 
 const Index = () => {
@@ -26,20 +25,32 @@ const Index = () => {
 
   return (
     <Fragment>
-      {posts.map((post) => (
-        <Card key={post.id} style={{ width: '18rem', margin: '10px', cursor: 'pointer' }} onClick={() => openModal(post)}>
-          <Card.Body>
-            <Card.Title>{post.title}</Card.Title>
-          </Card.Body>
-        </Card>
-      ))}
+      <Row xs={1} md={2} lg={3} className="g-4">
+        {posts.map((post) => (
+          <Col key={post.id}>
+            <Card style={{ width: '18rem', margin: '10px', cursor: 'pointer' }} onClick={() => openModal(post)}>
+              <Card.Body>
+                <Card.Title>{post.title}</Card.Title>
+                <Card.Img variant="top" src={post.image.url} alt="Post Image" style={{ maxHeight: '100%', objectFit: 'cover' }} />
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
 
-      <Modal show={showModal} onHide={closeModal}>
+      <Modal show={showModal} onHide={closeModal} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>{selectedPost?.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {selectedPost?.content}
+          <Row>
+            <Col md={6}>
+              <img src={selectedPost?.image.url} alt="Post Image" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </Col>
+            <Col md={6}>
+              {selectedPost?.content}
+            </Col>
+          </Row>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={closeModal}>

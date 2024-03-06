@@ -13,7 +13,9 @@ const fetchPosts = () => {
       'uid': uid,
     },
   })
-    .then(res => res.data)
+  .then(res => { // レスポンスの内容をコンソールに出力
+    return res.data; // データだけを返す
+  })
     .catch(error => {
       if (error.response) {
         // レスポンスが返されたが、ステータスコードがエラー範囲外

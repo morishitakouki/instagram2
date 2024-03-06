@@ -9,6 +9,7 @@ import { useLocation } from 'react-router-dom';
 function Create() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [image, setImage] = useState(null);
   const [showMessage, setShowMessage] = useState(false);
   const [error, setError] = useState('');
 
@@ -24,6 +25,11 @@ function Create() {
       return () => clearTimeout(timeoutId);
     }
   }, [showMessage]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -48,24 +54,31 @@ function Create() {
       return;
     }
 
-    const postData = { title, content };
+    const formData = new FormData();
+    formData.append('post[title]', title);
+    formData.append('post[content]', content);
+    if (image) {
+      formData.append('post[image]', image);
+    }
+
     const accessToken = localStorage.getItem('access-token');
     const client = localStorage.getItem('client');
     const uid = localStorage.getItem('uid');
 
-    axios.post(postsAPI, postData, {
+    axios.post(postsAPI, formData, {
       headers: {
-        'Content-Type': 'application/json',
-        'access-token': accessToken ,
-        'client':client,         
-        'uid': uid,           
+        'Content-Type': 'multipart/form-data',
+        'access-token': accessToken,
+        'client': client,
+        'uid': uid,
       },
-     } )
+    })
       .then(() => {
         setShowMessage(true);
         setError('');
         setTitle('');
         setContent('');
+        setImage(null);
       })
       .catch((error) => {
         console.error(error);
@@ -105,6 +118,15 @@ function Create() {
                 placeholder="内容を入力"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="postImage">
+              <Form.Label>画像</Form.Label>
+              <Form.Control
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
               />
             </Form.Group>
 
