@@ -1,9 +1,8 @@
-# app/controllers/api/v1/posts_controller.rb
-
 module Api
   module V1
     class PostsController < ApplicationController
       protect_from_forgery with: :null_session
+      before_action :set_post, only: [:destroy]
 
       def index
         user = current_api_v1_user
@@ -19,13 +18,24 @@ module Api
           render json: post.errors, status: :unprocessable_entity
         end
       end
-
+    
+      def destroy
+        if @post.destroy
+          head :no_content
+        else
+          render json: @post.errors, status: :unprocessable_entity
+        end
+      end
   
 
       private
 
       def post_params
         params.require(:post).permit(:title, :content, :image).merge(user_id: current_api_v1_user.id)
+      end
+
+      def set_post
+        @post = Post.find(params[:id])
       end
     end
   end

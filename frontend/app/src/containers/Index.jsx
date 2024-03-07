@@ -1,6 +1,9 @@
+// components/Index.js
+
 import React, { Fragment, useEffect, useState } from "react";
-import { Modal, Button, Card, Row, Col } from 'react-bootstrap';
-import fetchPosts from '../apis/blogsAPI.js';
+import { Modal, Button, Card, Row, Col, } from 'react-bootstrap';
+import { fetchPosts, deletePost } from '../apis/blogsAPI.js';
+import '../App.css'; 
 
 const Index = () => {
   const [posts, setPosts] = useState([]);
@@ -10,7 +13,7 @@ const Index = () => {
   useEffect(() => {
     fetchPosts()
       .then((data) => setPosts(data))
-      .catch((error) => console.error("Error fetching posts:", error));
+      .catch((error) => console.error("Error while fetching posts:", error));
   }, []);
 
   const openModal = (post) => {
@@ -23,8 +26,31 @@ const Index = () => {
     setShowModal(false);
   };
 
+  const handleDeletePost = async () => {
+    if (window.confirm('本当に削除しますか？')) {
+      try {
+        const isDeleted = await deletePost(selectedPost.id);
+
+        if (isDeleted) {
+          closeModal();
+
+          const updatedPosts = await fetchPosts();
+          setPosts(updatedPosts);
+        }
+      } catch (error) {
+        console.error("Error handling post deletion:", error);
+      }
+    }
+  };
+
   return (
     <Fragment>
+      {posts.length === 0 && (
+        <div className="empty-posts-message">
+         <h3>投稿がありません(´･_･`)</h3>  
+       </div>
+      )}
+
       <Row xs={1} md={2} lg={3} className="g-4">
         {posts.map((post) => (
           <Col key={post.id}>
@@ -53,6 +79,9 @@ const Index = () => {
           </Row>
         </Modal.Body>
         <Modal.Footer>
+          <Button variant="danger" onClick={handleDeletePost}>
+            削除
+          </Button>
           <Button variant="secondary" onClick={closeModal}>
             Close
           </Button>

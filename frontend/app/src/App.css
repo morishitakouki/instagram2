@@ -109,3 +109,31 @@
     transform: translateY(0);
   }
 }
+
+.empty-posts-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh; 
+  font-size: 1.5rem;
+  padding: 20px;
+  margin: 20px auto; 
+}
+
+.background-image {
+  background: url('/images/1117044.jpg') center/cover no-repeat; /* 背景画像のURLを指定 */
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#form-box {
+  background-color: rgba(255, 255, 255, 0.8); /* ボックスの背景色と透明度を設定 */
+  padding: 20px;
+  border-radius: 10px; /* ボックスの角を丸くする */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 影の設定 */
+  width: 100%;
+  max-width: 500px; /* ボックスの最大幅を指定 */
+  margin-bottom: 200px;
+}

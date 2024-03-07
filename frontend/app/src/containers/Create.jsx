@@ -86,57 +86,61 @@ function Create() {
   };
 
   return (
-    <Container className="mt-5">
-      {showMessage && (
-        <Alert variant="success" className="animated-alert">
-          投稿に成功しました
-        </Alert>
-      )}
-      {error && <Alert variant="danger">{error}</Alert>}
-      {successMessage && (
-        <Alert variant="success">{successMessage}</Alert>
-      )}
-      <Row>
-        <Col md={{ span: 6, offset: 3 }}>
-          <h2 className="mb-4">投稿を作成</h2>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3" controlId="postTitle">
-              <Form.Label>タイトル</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="タイトルを入力"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            </Form.Group>
+    <div className="background-image">
+      <Container className="mt-5">
+        {showMessage && (
+          <Alert variant="success" className="animated-alert">
+            投稿に成功しました
+          </Alert>
+        )}
+        {error && <Alert variant="danger">{error}</Alert>}
+        {successMessage && (
+          <Alert variant="success">{successMessage}</Alert>
+        )}
+        <Row>
+          <Col md={{ span: 6, offset: 3 }}>
+            <div id="form-box">
+              <h2 className="mb-4">投稿を作成</h2>
+              <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3" controlId="postTitle">
+                  <Form.Label>タイトル</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="タイトルを入力"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3" controlId="postContent">
-              <Form.Label>内容</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                placeholder="内容を入力"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-              />
-            </Form.Group>
+                <Form.Group className="mb-3" controlId="postContent">
+                  <Form.Label>内容</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    placeholder="内容を入力"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3" controlId="postImage">
-              <Form.Label>画像</Form.Label>
-              <Form.Control
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-            </Form.Group>
+                <Form.Group className="mb-3" controlId="postImage">
+                  <Form.Label>画像</Form.Label>
+                  <Form.Control
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
+                </Form.Group>
 
-            <Button variant="primary" type="submit">
-              投稿
-            </Button>
-          </Form>
-        </Col>
-      </Row>
-    </Container>
+                <Button variant="primary" type="submit">
+                  投稿
+                </Button>
+              </Form>
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    </div>
   );
 }
 
