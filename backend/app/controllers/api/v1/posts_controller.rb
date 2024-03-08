@@ -2,7 +2,7 @@ module Api
   module V1
     class PostsController < ApplicationController
       protect_from_forgery with: :null_session
-      before_action :set_post, only: [:destroy]
+      before_action :set_post, only: [:destroy, :update]
 
       def index
         user = current_api_v1_user
@@ -33,6 +33,15 @@ module Api
         posts = Post.where(id: post_ids)
         render json: posts
       end
+      
+      def update
+        if @post.update(post_params)
+          render json: @post
+        else
+          render json: @post.errors, status: :unprocessable_entity
+        end
+      end
+      
   
 
       private

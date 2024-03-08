@@ -89,13 +89,30 @@ const checkBookmarkStatus = async (postId) => {
   }
 };
 
+const updatePost = async (postId, postData) => {
+  const headers = getHeaders();
+
+  try {
+    const response = await axios.patch(`${postsAPI}/${postId}`, postData, {
+      headers,
+    });
+
+    if (response.status === 200) {
+      return true;
+    }
+  } catch (error) {
+    handleRequestError(error);
+    throw error;
+  }
+};
+
 const handleRequestError = (error) => {
   if (error.response) {
-    console.error('Error response:', error.response);
+    console.error('エラーレスポンス:', error.response);
   } else if (error.request) {
-    console.error('No response received:', error.request);
+    console.error('応答がありませんでした:', error.request);
   } else {
-    console.error('Error setting up the request:', error.message);
+    console.error('リクエストの設定エラー:', error.message);
   }
   throw error;
 };
@@ -114,4 +131,4 @@ const fetchBookmarks = async () => {
   }
 };
 
-export { fetchPosts, deletePost, createBookmark, deleteBookmark, checkBookmarkStatus, fetchBookmarks };
+export { fetchPosts, deletePost, createBookmark, deleteBookmark, checkBookmarkStatus, updatePost, fetchBookmarks };

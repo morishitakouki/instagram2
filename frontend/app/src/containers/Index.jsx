@@ -1,55 +1,49 @@
 // components/Index.js
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Modal, Button, Card, Row, Col } from 'react-bootstrap';
-import { fetchPosts, deletePost, createBookmark, deleteBookmark, checkBookmarkStatus } from '../apis/blogsAPI.js';
+import { Modal, Button, Card, Row, Col, Form } from 'react-bootstrap';
+import { fetchPosts, deletePost, createBookmark, deleteBookmark, checkBookmarkStatus, updatePost } from '../apis/blogsAPI.js';
 import '../App.css';
 
 const Index = () => {
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [postData, setPostData] = useState({
+    title: "",
+    content: "",
+  });
+  const [editingPostId, setEditingPostId] = useState(null);
 
   useEffect(() => {
     fetchPosts()
       .then((data) => setPosts(data))
-      .catch((error) => console.error("Error while fetching posts:", error));
+      .catch((error) => console.error("投稿の取得エラー:", error));
   }, []);
 
-// components/Index.js
-
-// ... (前略)
-
-useEffect(() => {
-  const fetchBookmarkStatus = async () => {
-    try {
-      if (selectedPost) {
-        // 404エラー時にも適切に処理されるように修正
-        const data = await checkBookmarkStatus(selectedPost.id).catch((error) => {
-          if (error.response && error.response.status === 404) {
-            // エラーハンドリング (存在しない場合など)
-            setIsBookmarked(false);
-          } else {
-            // その他のエラー
-            console.error("Error checking bookmark status:", error);
+  useEffect(() => {
+    const fetchBookmarkStatus = async () => {
+      try {
+        if (selectedPost) {
+          const data = await checkBookmarkStatus(selectedPost.id).catch((error) => {
+            if (error.response && error.response.status === 404) {
+              setIsBookmarked(false);
+            } else {
+              console.error("ブックマーク状態の確認エラー:", error);
+            }
+          });
+          if (data) {
+            setIsBookmarked(data.bookmarked);
           }
-        });
-
-        if (data) {
-          setIsBookmarked(data.bookmarked);
         }
+      } catch (error) {
+        console.error("ブックマーク状態の確認エラー:", error);
       }
-    } catch (error) {
-      console.error("Error checking bookmark status:", error);
-    }
-  };
-
-  fetchBookmarkStatus();
-}, [selectedPost]);
-
-// ... (後略)
-
+    };
+    fetchBookmarkStatus();
+  }, [selectedPost]);
 
   const openModal = (post) => {
     setSelectedPost(post);
@@ -59,6 +53,25 @@ useEffect(() => {
   const closeModal = () => {
     setSelectedPost(null);
     setShowModal(false);
+  };
+
+  const openEditModal = () => {
+    const postId = selectedPost.id;
+    setPostData({
+      title: selectedPost.title,
+      content: selectedPost.content,
+    });
+    setShowEditModal(true);
+    setEditingPostId(postId); 
+  };
+
+  const closeEditModal = () => {
+    setShowEditModal(false);
+  };
+
+  const handleEditPost = async () => {
+    closeModal();
+    openEditModal();
   };
 
   const handleDeletePost = async () => {
@@ -73,7 +86,7 @@ useEffect(() => {
           setPosts(updatedPosts);
         }
       } catch (error) {
-        console.error("Error handling post deletion:", error);
+        console.error("投稿の削除エラー:", error);
       }
     }
   };
@@ -90,14 +103,35 @@ useEffect(() => {
         updatedIsBookmarked = true;
       }
 
-      // Update the bookmark status first
       setIsBookmarked(updatedIsBookmarked);
 
-      // Fetch updated posts
       const updatedPosts = await fetchPosts();
       setPosts(updatedPosts);
     } catch (error) {
-      console.error("Error toggling bookmark:", error);
+      console.error("ブックマークの切り替えエラー:", error);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setPostData({
+      ...postData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      await updatePost(editingPostId, postData);
+
+      closeEditModal();
+
+      const updatedPosts = await fetchPosts();
+      setPosts(updatedPosts);
+    } catch (error) {
+      console.error("投稿の更新エラー:", error);
     }
   };
 
@@ -140,6 +174,9 @@ useEffect(() => {
           <Button variant={isBookmarked ? "success" : "primary"} onClick={handleToggleBookmark}>
             {isBookmarked ? "ブックマーク解除" : "ブックマーク"}
           </Button>
+          <Button variant="primary" onClick={handleEditPost}>
+            編集
+          </Button>
           <Button variant="danger" onClick={handleDeletePost}>
             削除
           </Button>
@@ -148,8 +185,44 @@ useEffect(() => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <Modal show={showEditModal} onHide={closeEditModal} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>投稿を編集する</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="formTitle">
+              <Form.Label>Title</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter title"
+                name="title"
+                value={postData.title}
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formContent">
+              <Form.Label>Content</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                placeholder="Enter content"
+                name="content"
+                value={postData.content}
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            <Button variant="primary" type="submit">
+              投稿をアップデート
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </Fragment>
   );
 };
 
 export default Index;
+
