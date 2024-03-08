@@ -26,6 +26,13 @@ module Api
           render json: @post.errors, status: :unprocessable_entity
         end
       end
+
+      def bookmarks
+        user_bookmarks = current_api_v1_user.bookmarks
+        post_ids = user_bookmarks.pluck(:post_id)
+        posts = Post.where(id: post_ids)
+        render json: posts
+      end
   
 
       private

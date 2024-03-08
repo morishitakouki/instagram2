@@ -1,20 +1,55 @@
 // components/Index.js
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Modal, Button, Card, Row, Col, } from 'react-bootstrap';
-import { fetchPosts, deletePost } from '../apis/blogsAPI.js';
-import '../App.css'; 
+import { Modal, Button, Card, Row, Col } from 'react-bootstrap';
+import { fetchPosts, deletePost, createBookmark, deleteBookmark, checkBookmarkStatus } from '../apis/blogsAPI.js';
+import '../App.css';
 
 const Index = () => {
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   useEffect(() => {
     fetchPosts()
       .then((data) => setPosts(data))
       .catch((error) => console.error("Error while fetching posts:", error));
   }, []);
+
+// components/Index.js
+
+// ... (前略)
+
+useEffect(() => {
+  const fetchBookmarkStatus = async () => {
+    try {
+      if (selectedPost) {
+        // 404エラー時にも適切に処理されるように修正
+        const data = await checkBookmarkStatus(selectedPost.id).catch((error) => {
+          if (error.response && error.response.status === 404) {
+            // エラーハンドリング (存在しない場合など)
+            setIsBookmarked(false);
+          } else {
+            // その他のエラー
+            console.error("Error checking bookmark status:", error);
+          }
+        });
+
+        if (data) {
+          setIsBookmarked(data.bookmarked);
+        }
+      }
+    } catch (error) {
+      console.error("Error checking bookmark status:", error);
+    }
+  };
+
+  fetchBookmarkStatus();
+}, [selectedPost]);
+
+// ... (後略)
+
 
   const openModal = (post) => {
     setSelectedPost(post);
@@ -43,12 +78,35 @@ const Index = () => {
     }
   };
 
+  const handleToggleBookmark = async () => {
+    try {
+      let updatedIsBookmarked;
+
+      if (isBookmarked) {
+        await deleteBookmark(selectedPost.id);
+        updatedIsBookmarked = false;
+      } else {
+        await createBookmark(selectedPost.id);
+        updatedIsBookmarked = true;
+      }
+
+      // Update the bookmark status first
+      setIsBookmarked(updatedIsBookmarked);
+
+      // Fetch updated posts
+      const updatedPosts = await fetchPosts();
+      setPosts(updatedPosts);
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+    }
+  };
+
   return (
     <Fragment>
       {posts.length === 0 && (
         <div className="empty-posts-message">
-         <h3>投稿がありません(´･_･`)</h3>  
-       </div>
+          <h3>投稿がありません(´･_･`)</h3>
+        </div>
       )}
 
       <Row xs={1} md={2} lg={3} className="g-4">
@@ -79,6 +137,9 @@ const Index = () => {
           </Row>
         </Modal.Body>
         <Modal.Footer>
+          <Button variant={isBookmarked ? "success" : "primary"} onClick={handleToggleBookmark}>
+            {isBookmarked ? "ブックマーク解除" : "ブックマーク"}
+          </Button>
           <Button variant="danger" onClick={handleDeletePost}>
             削除
           </Button>

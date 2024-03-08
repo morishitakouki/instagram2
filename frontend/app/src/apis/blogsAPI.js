@@ -1,7 +1,7 @@
 // apis/blogsAPI.js
 
 import axios from 'axios';
-import { postsAPI } from '../urls/indexurl';
+import { postsAPI, bookmarksAPI, bookmarksListAPI } from '../urls/indexurl';
 
 const getHeaders = () => {
   return {
@@ -40,6 +40,55 @@ const deletePost = async (postId) => {
   }
 };
 
+const createBookmark = async (postId) => {
+  const headers = getHeaders();
+
+  try {
+    const response = await axios.post(bookmarksAPI(postId), {}, {
+      headers,
+    });
+
+    if (response.status === 200) {
+      return true;
+    }
+  } catch (error) {
+    handleRequestError(error);
+    throw error;
+  }
+};
+
+const deleteBookmark = async (postId) => {
+  const headers = getHeaders();
+
+  try {
+    const response = await axios.delete(bookmarksAPI(postId), {
+      headers,
+    });
+
+    if (response.status === 204) {
+      return true;
+    }
+  } catch (error) {
+    handleRequestError(error);
+    throw error;
+  }
+};
+
+const checkBookmarkStatus = async (postId) => {
+  const headers = getHeaders();
+
+  try {
+    const response = await axios.get(bookmarksAPI(postId), {
+      headers,
+    });
+
+    return response.data;
+  } catch (error) {
+    handleRequestError(error);
+    throw error;
+  }
+};
+
 const handleRequestError = (error) => {
   if (error.response) {
     console.error('Error response:', error.response);
@@ -51,4 +100,18 @@ const handleRequestError = (error) => {
   throw error;
 };
 
-export { fetchPosts, deletePost };
+const fetchBookmarks = async () => {
+  const headers = getHeaders();
+
+  try {
+    const response = await axios.get(bookmarksListAPI, {
+      headers,
+    });
+
+    return response.data;
+  } catch (error) {
+    handleRequestError(error);
+  }
+};
+
+export { fetchPosts, deletePost, createBookmark, deleteBookmark, checkBookmarkStatus, fetchBookmarks };

@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, } from 'react-router-dom';
 import Sidebar from './components/Sidebar.jsx';
 import './App.css';
 import Create from './containers/Create.jsx';
@@ -8,6 +8,7 @@ import Register from './containers/Register.jsx';
 import Header from './components/Header.jsx';
 import getCurrentUser from './apis/UserInfo.jsx';
 import Login from './containers/Login.jsx';
+import BookmarksIndex from './containers/BookmarksIndex.jsx';
 
 export const UserContext = createContext();
 
@@ -20,6 +21,7 @@ const AppRoutes = () => {
         <>
           <Route path="/create" element={<Create />} />
           <Route path="/index" element={<Index />} />
+          <Route exact path="/bookmarks"element={<BookmarksIndex />} />
         </>
       ) : (
         <>

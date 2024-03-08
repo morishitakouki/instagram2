@@ -8,4 +8,6 @@ class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
   has_many :posts
+
+  has_many :bookmarks, dependent: :destroy
 end
