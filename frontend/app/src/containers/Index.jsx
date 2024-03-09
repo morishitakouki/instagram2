@@ -1,7 +1,5 @@
-// components/Index.js
-
 import React, { Fragment, useEffect, useState } from "react";
-import { Modal, Button, Card, Row, Col, Form } from 'react-bootstrap';
+import { Modal, Button, Card, Row, Col, Form, Alert } from 'react-bootstrap';
 import { fetchPosts, deletePost, createBookmark, deleteBookmark, checkBookmarkStatus, updatePost } from '../apis/blogsAPI.js';
 import '../App.css';
 
@@ -16,6 +14,8 @@ const Index = () => {
     content: "",
   });
   const [editingPostId, setEditingPostId] = useState(null);
+  const [errorEditing, setErrorEditing] = useState(false);
+  const [successEditing, setSuccessEditing] = useState(false);
 
   useEffect(() => {
     fetchPosts()
@@ -62,11 +62,14 @@ const Index = () => {
       content: selectedPost.content,
     });
     setShowEditModal(true);
-    setEditingPostId(postId); 
+    setEditingPostId(postId);
   };
 
   const closeEditModal = () => {
     setShowEditModal(false);
+    // エラーと成功のメッセージをクリア
+    setErrorEditing(false);
+    setSuccessEditing(false);
   };
 
   const handleEditPost = async () => {
@@ -130,13 +133,22 @@ const Index = () => {
 
       const updatedPosts = await fetchPosts();
       setPosts(updatedPosts);
+      setSuccessEditing(true);
+
+      setErrorEditing(false);
+
+      setTimeout(() => setSuccessEditing(false), 3000);
     } catch (error) {
       console.error("投稿の更新エラー:", error);
+      setErrorEditing(true);
+
+      setSuccessEditing(false);
     }
   };
 
   return (
     <Fragment>
+      {successEditing && <Alert variant="success">編集に成功しました。</Alert>}
       {posts.length === 0 && (
         <div className="empty-posts-message">
           <h3>投稿がありません(´･_･`)</h3>
@@ -190,6 +202,7 @@ const Index = () => {
           <Modal.Title>投稿を編集する</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {errorEditing && <Alert variant="danger">タイトルとコンテントは両方入力してください。</Alert>}
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="formTitle">
               <Form.Label>Title</Form.Label>
@@ -225,4 +238,3 @@ const Index = () => {
 };
 
 export default Index;
-

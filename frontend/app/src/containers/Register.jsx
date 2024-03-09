@@ -22,7 +22,7 @@ function Register() {
   });
 
   useEffect(() => {
-    trigger(); // フォームのバリデーションをトリガー
+    trigger(); 
   }, [trigger]);
 
   const onSubmit = async (data) => {
@@ -43,7 +43,6 @@ function Register() {
      
        
       if (response.ok) {
-        // レスポンスヘッダーから認証情報を取得
        
         navigate('/login'); 
 
