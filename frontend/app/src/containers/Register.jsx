@@ -60,13 +60,12 @@ function Register() {
           email: data.email,
           password: data.password,
           password_confirmation: data.password_confirmation, 
-          confirm_success_url: 'http://localhost:3000',
         }),
       });
      
        
       if (response.ok) {
-        navigate('/login'); 
+        navigate('/'); 
       } else {
         console.error('認証エラー');
       }

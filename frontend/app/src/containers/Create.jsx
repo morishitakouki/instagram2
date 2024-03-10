@@ -17,13 +17,17 @@ function Create() {
   const successMessage = location.state && location.state.successMessage;
 
   useEffect(() => {
+    let timeoutId;
+    console.log(showMessage)
     if (showMessage) {
-      const timeoutId = setTimeout(() => {
+      timeoutId = setTimeout(() => {
         setShowMessage(false);
       }, 3000);
-
-      return () => clearTimeout(timeoutId);
     }
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [showMessage]);
 
   const handleImageChange = (e) => {

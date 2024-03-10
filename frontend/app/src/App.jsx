@@ -43,6 +43,7 @@ function App() {
       console.log(res);
 
       if (res?.is_login === true) {
+        console.log(res.is_login)
         setIsSignedIn(true);
         setCurrentUser(res?.data);
       } else {
@@ -55,7 +56,7 @@ function App() {
 
   useEffect(() => {
     handleGetCurrentUser();
-  }, []);
+  }, [isSignedIn]);
 
   return (
     <UserContext.Provider
