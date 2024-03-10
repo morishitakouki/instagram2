@@ -12,23 +12,23 @@ function Create() {
   const [image, setImage] = useState(null);
   const [showMessage, setShowMessage] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const location = useLocation();
-  const successMessage = location.state && location.state.successMessage;
 
   useEffect(() => {
-    let timeoutId;
-    console.log(showMessage)
-    if (showMessage) {
-      timeoutId = setTimeout(() => {
-        setShowMessage(false);
-      }, 3000);
-    }
+    if (location.state && location.state.successMessage) {
+      setSuccessMessage(location.state.successMessage);
+      setShowMessage(true);
 
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [showMessage]);
+      const timer = setTimeout(() => {
+        setShowMessage(false);
+        setSuccessMessage('');
+      }, 4000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [location.state]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -78,11 +78,19 @@ function Create() {
       },
     })
       .then(() => {
+        setSuccessMessage('投稿に成功しました');
         setShowMessage(true);
         setError('');
         setTitle('');
         setContent('');
         setImage(null);
+
+        const timer = setTimeout(() => {
+          setShowMessage(false);
+          setSuccessMessage('');
+        }, 3000);
+
+        return () => clearTimeout(timer);
       })
       .catch((error) => {
         console.error(error);
@@ -94,13 +102,10 @@ function Create() {
       <Container className="mt-5">
         {showMessage && (
           <Alert variant="success" className="animated-alert">
-            投稿に成功しました
+            {successMessage}
           </Alert>
         )}
         {error && <Alert variant="danger">{error}</Alert>}
-        {successMessage && (
-          <Alert variant="success">{successMessage}</Alert>
-        )}
         <Row>
           <Col md={{ span: 6, offset: 3 }}>
             <div id="form-box">
