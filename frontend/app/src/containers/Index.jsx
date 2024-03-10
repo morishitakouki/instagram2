@@ -67,7 +67,6 @@ const Index = () => {
 
   const closeEditModal = () => {
     setShowEditModal(false);
-    // エラーと成功のメッセージをクリア
     setErrorEditing(false);
     setSuccessEditing(false);
   };

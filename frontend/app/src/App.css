@@ -4,47 +4,19 @@
   
 }
 
-.sidebar {
-  width: 200px;
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  background-color: #f0f0f0; /* サイドバーの背景色 */
-  padding: 20px;
-}
 
-.sidebar-icon {
-  margin-bottom: 90px;
-}
 
-.icon-size {
-  width: 140px;
-  height: auto;
-}
+
+
+
 
 .content {
   margin-left: 220px; /* サイドバーの幅と同じ値 */
   padding: 20px;
 }
 
-.sidebar a {
-  display: block;
-  color: black;
-  text-decoration: none;
-  padding: 10px;
-  margin: 5px 0;
-}
 
-.sidebar a:hover {
-  background-color: #ddd;
-}
 
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  margin-top: 20px;
-}
 
 
 

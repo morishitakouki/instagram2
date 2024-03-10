@@ -16,7 +16,7 @@ const Header = () => {
 
     setCurrentUser(null);
 
-    navigate('/login');
+    navigate('/');
     
   };
 

@@ -1,13 +1,22 @@
-import React from 'react'
-import Icon from "../images/blog.png"
-import '../App.css';
+import React from 'react';
+import styled from 'styled-components';
+import Icon from "../images/Logo.png";
 
-function SidebarIcon() {
+const StyledSidebarIcon = styled.div`
+  margin-bottom: 90px;
+
+  img.icon-size {
+    width: 196px;
+    height: auto;
+  }
+`;
+
+const SidebarIcon = () => {
   return (
-    <div className='sidebar-icon'>
+    <StyledSidebarIcon>
       <img src={Icon} alt="" className="icon-size"/>
-    </div>
-  )
-}
+    </StyledSidebarIcon>
+  );
+};
 
-export default SidebarIcon
+export default SidebarIcon;

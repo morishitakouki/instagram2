@@ -26,7 +26,7 @@ const AppRoutes = () => {
       ) : (
         <>
           <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
         </>
       )}
     </Routes>
@@ -69,7 +69,7 @@ function App() {
       <div className="App">
         <Router>
           <div className="sidebar">
-            {isSignedIn && <Sidebar />}
+          {isSignedIn && <Sidebar />}
           </div>
           <div className="content">
             {isSignedIn && <Header />}
